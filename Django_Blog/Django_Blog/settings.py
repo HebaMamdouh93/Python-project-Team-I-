@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_Blog'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -76,8 +77,12 @@ WSGI_APPLICATION = 'Django_Blog.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangoBlogdb',
+        'USER': 'root',
+        'PASSWORD': '123',
+        'HOST': 'localhost', #default host
+        'PORT': '3306' #default port
     }
 }
 
