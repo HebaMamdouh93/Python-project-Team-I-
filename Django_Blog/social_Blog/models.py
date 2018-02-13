@@ -39,3 +39,8 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.tagName
+
+class PostTag(models.Model):
+    post = models.ForeignKey(Post)
+    tag = models.ForeignKey(Tag)    
+
