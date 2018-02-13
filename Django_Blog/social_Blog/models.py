@@ -17,3 +17,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+class UserCat(models.Model):
+    user = models.ForeignKey(User)
+    cat = models.ForeignKey(Category)    
+
