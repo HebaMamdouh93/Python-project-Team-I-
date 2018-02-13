@@ -44,3 +44,10 @@ class PostTag(models.Model):
     post = models.ForeignKey(Post)
     tag = models.ForeignKey(Tag)    
 
+
+class ForbiddenWords(models.Model):
+    word = models.CharField(max_length = 255)
+    wordLen = models.IntegerField()    
+
+    def __str__(self):
+        return self.word
