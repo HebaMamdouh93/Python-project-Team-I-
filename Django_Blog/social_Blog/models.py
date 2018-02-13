@@ -33,3 +33,9 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class Tag(models.Model):
+    tagName = models.CharField(max_length = 255)
+
+    def __str__(self):
+        return self.tagName
