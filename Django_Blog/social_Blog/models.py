@@ -22,3 +22,14 @@ class UserCat(models.Model):
     user = models.ForeignKey(User)
     cat = models.ForeignKey(Category)    
 
+class Post(models.Model):
+    text = models.CharField(max_length = 255)
+    img = models.CharField(max_length = 255)
+    title = models.CharField(max_length = 255)
+    likes = models.IntegerField(null=True)
+    unLikes = models.IntegerField(null=True)
+    user =  models.ForeignKey(User)
+    cat = models.ForeignKey(Category)
+
+    def __str__(self):
+        return self.title
