@@ -1,16 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
-class User(models.Model):
-    userName = models.CharField(max_length = 255)
-    email = models.CharField(max_length = 255)
-    password = models.CharField(max_length = 255)
-    userType = models.IntegerField()
-    blockType = models.IntegerField()
 
-    def __str__(self):
-        return self.userName
 
 class Category(models.Model):
     name = models.CharField(max_length = 255)
@@ -18,9 +11,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+
 class UserCat(models.Model):
     user = models.ForeignKey(User)
     cat = models.ForeignKey(Category)    
+
+    def __str__(self):
+        return self.user_id
 
 class Post(models.Model):
     text = models.CharField(max_length = 255)
@@ -28,6 +25,7 @@ class Post(models.Model):
     title = models.CharField(max_length = 255)
     likes = models.IntegerField(null=True)
     unLikes = models.IntegerField(null=True)
+    publish_date=models.DateTimeField(auto_now_add=True,null=True)
     user =  models.ForeignKey(User)
     cat = models.ForeignKey(Category)
 
@@ -44,6 +42,8 @@ class PostTag(models.Model):
     post = models.ForeignKey(Post)
     tag = models.ForeignKey(Tag)    
 
+    def __str__(self):
+        return self.post
 
 class ForbiddenWords(models.Model):
     word = models.CharField(max_length = 255)
