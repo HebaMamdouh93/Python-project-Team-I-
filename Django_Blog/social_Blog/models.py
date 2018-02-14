@@ -26,7 +26,6 @@ class Post(models.Model):
     likes = models.IntegerField(null=True)
     unLikes = models.IntegerField(null=True)
     publish_date=models.DateTimeField(auto_now_add=True,null=True)
-    user =  models.ForeignKey(User)
     cat = models.ForeignKey(Category)
 
     def __str__(self):
@@ -51,3 +50,21 @@ class ForbiddenWords(models.Model):
 
     def __str__(self):
         return self.word
+
+class Comment(models.Model):
+    commmentText = models.CharField(max_length = 255)
+    user =  models.ForeignKey(User)
+    post =  models.ForeignKey(Post)
+    comTime = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.commmentText
+
+class ReplyComment(models.Model):
+    replyText = models.CharField(max_length = 255)
+    user =  models.ForeignKey(User)
+    comment =  models.ForeignKey(Comment)
+    repTime = models.DateTimeField(auto_now_add=True)  
+
+    def __str__(self):
+        return self.replyText
