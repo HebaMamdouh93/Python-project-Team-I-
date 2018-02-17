@@ -101,18 +101,17 @@ USE_L10N = True
 USE_TZ = True
 
 
-<<<<<<< HEAD
+
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'social_Blog/static/images')
 # this line is added and it serves as the root address of uploaded file
 
 MEDIA_URL = '/social_Blog/'
-=======
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 #STATIC_URL = '/static/'
 STATIC_URL = os.path.join(BASE_DIR,"social_Blog/static/")
 
->>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81
+
