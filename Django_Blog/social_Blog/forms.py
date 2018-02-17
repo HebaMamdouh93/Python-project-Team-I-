@@ -1,7 +1,6 @@
 from django import forms
-<<<<<<< HEAD
 from . import models
-
+from .models import Comment,ReplyComment
 
 class createPost(forms.ModelForm):
     class Meta:
@@ -55,8 +54,8 @@ class edituserForm(forms.ModelForm):
             'is_active': forms.Select(),
         }
 
-=======
-from .models import Comment,ReplyComment
+
+
 
 class CommentForm(forms.ModelForm):
     
@@ -79,5 +78,3 @@ class ReplyForm(forms.ModelForm):
         }
         
 
-        
->>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81
