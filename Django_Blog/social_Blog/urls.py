@@ -18,6 +18,9 @@ from . import views
 
 urlpatterns = [
     url(r'^home/$', views.home),
-    
+    url(r'^post/(?P<post_id>[0-9]+)$', views.getPost),
+    url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
+    url(r'^post/addLike/(?P<post_id>[0-9]+)$', views.addLike),  
+    url(r'^post/DisLike/(?P<post_id>[0-9]+)$', views.DisLike), 
     
 ]
