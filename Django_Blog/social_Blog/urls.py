@@ -18,6 +18,8 @@ from . import views
 
 urlpatterns = [
     url(r'^home/$', views.home),
+    url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
+    
     
     
 ]
