@@ -1,3 +1,4 @@
+
 #from django.conf.urls import include, url
 from django.conf.urls import include, url ,patterns
 from . import views
@@ -6,6 +7,17 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    
+    url(r'^home/$', views.home),
+
+    url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
+
+
+    url(r'^post/(?P<post_id>[0-9]+)$', views.getPost),
+    url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
+    url(r'^post/addLike/(?P<post_id>[0-9]+)$', views.addLike),  
+    url(r'^post/DisLike/(?P<post_id>[0-9]+)$', views.DisLike), 
+
     url(r'^posts/$', views.allpost, name='posts'),
     url(r'^posts/(?P<postId>[0-9]+)/update$', views.editpost),
     url(r'^posts/(?P<postId>[0-9]+)/delete$', views.delete),
@@ -34,5 +46,4 @@ urlpatterns = [
     url(r'^tags/create_ajax$',  views.createtagAjax, name="ajax_create"),
 
 ]
-
 

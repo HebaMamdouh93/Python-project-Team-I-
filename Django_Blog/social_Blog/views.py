@@ -1,13 +1,13 @@
-from django.http import request
-from django.shortcuts import HttpResponse ,redirect
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.shortcuts import render,get_object_or_404,HttpResponse ,redirect
+from .models import Post,Comment,PostReview,ForbiddenWords,ReplyComment ,Category ,Tag, PostTag ,User
+from django.http import HttpResponseRedirect,request,HttpResponse ,JsonResponse
+from .forms import CommentForm,ReplyForm ,createPost, categoryForm, tagForm, wordForm ,userForm ,edituserForm
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.shortcuts import get_object_or_404
-from .forms import createPost, categoryForm, tagForm, wordForm ,userForm ,edituserForm
-from .models import Post, Category, Tag, PostTag, ForbiddenWords,User
 from django.conf import settings
-import random
+
 
 def allpost(request):
     posts = Post.objects.all()
@@ -186,3 +186,205 @@ def edituser(request ,userId):
     else:
         form = edituserForm(instance=user)
     return render(request, 'edituser.html', {'form': form})
+
+
+
+
+# Create your views here.
+def home (request):
+	#return HttpResponse("<h1>Home Page</h1>")
+	all_Catagories=Category.objects.all()
+	all_Posts=Post.objects.all()
+	latest_Posts=Post.objects.all().order_by('-publish_date')[:3:1]
+	latest_Post=Post.objects.all().order_by('-publish_date')[:1].get()
+	context={"all_Catagories":all_Catagories ,
+	"latest_Posts":latest_Posts,
+	"all_Posts":all_Posts,
+	"latest_Post":latest_Post}
+	return render(request,"home.html",context)
+
+
+
+def showCatPosts(request,cat_id):
+	#return HttpResponse("<h1>showCatPosts</h1>")
+	cat_name=Category.objects.get(id=cat_id).name
+	all_Catagories=Category.objects.all()
+	#cat_Posts=Post.objects.filter(cat_id=cat_id)
+	latest_Posts=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')
+	latest_Post=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')[:1].get()
+	context={"all_Catagories":all_Catagories ,
+	"latest_Posts":latest_Posts,
+	"latest_Post":latest_Post,
+	"cat_name":cat_name}
+	return render(request,"CatPosts.html",context)	
+
+def draw(len):
+    i=1
+    newword = "*"
+    while(i<len):
+        newword += "*"
+        i += 1
+    return newword
+                
+        
+def getPost(request, post_id):
+
+    #post
+    po = Post.objects.get(id = post_id)
+
+    #all Replies from db
+    all_replies = ReplyComment.objects.all()
+
+    #count likes and dislikes to exist user
+    countLike = 0
+    countDislike = 0
+
+    countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count() #count likes to exist user
+    
+    countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count() #count dislikes to exist user
+
+    #all Likes and dislikes
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()#alllikes to this post in server    
+    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()#alldisikes to this post in server
+ 
+    #get bad words from db 
+    all_words = ForbiddenWords.objects.all()
+
+    #comments on post
+    all_comments = Comment.objects.filter(post = post_id)
+    form = CommentForm()
+    formReply = ReplyForm()
+   
+
+    if request.method == "POST":
+        
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            all_comments = form.save(commit=False)
+            all_comments.user_id = 1
+            all_comments.post_id = post_id
+            myText = form.cleaned_data['commmentText']
+
+            for word in all_words:
+                myText=myText.replace(word.word, draw(word.wordLen))
+            #messages.info(request, myText)
+            all_comments.commmentText = myText
+            form.save() #save post (comment,postID,userID)
+
+            return HttpResponseRedirect('/social_Blog/post/'+post_id)
+    
+   
+	
+    context = {
+        'AllLikes':allLikes,
+        'AllDisLikes':DisLikes,
+        'countLikes':countLike,
+        'countDislikes':countDislike,
+        "all_comments": all_comments,
+        'form':form,
+        'post':po,
+        'formReply':formReply,
+        'AllReplies':all_replies,
+    }
+    return render(request, 'post/post_details.html', context)
+    
+def reply(request,comment_id,post_id):
+     #get bad words from db 
+    all_words = ForbiddenWords.objects.all()
+
+    #replies on comment
+    all_replies = ReplyComment.objects.filter(comment = comment_id)
+    formReply = ReplyForm()
+    if request.method == "POST":
+        
+        formReply = ReplyForm(request.POST)
+        if formReply.is_valid():
+            all_replies = formReply.save(commit=False)
+            all_replies.user_id = 1
+            all_replies.comment_id = comment_id
+            myText = formReply.cleaned_data['replyText']
+            for word in all_words:
+                myText=myText.replace(word.word, draw(word.wordLen))
+            #messages.info(request, myText)
+            all_replies.replyText = myText
+
+           
+            formReply.save() #save post (comment,postID,userID)
+            return HttpResponseRedirect('/social_Blog/post/'+post_id)
+ 
+    
+def addLike(request,post_id):
+   
+    messages.info(request, post_id)
+    postRev= PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
+    p = PostReview(post_id=post_id, user_id=1,review =1)
+    
+    if postRev == 0:
+        ps = PostReview(post_id=post_id, user_id=1,review =1)
+        ps.save()  
+     
+    else:
+        pd = PostReview.objects.filter(post_id = post_id,user_id =1,review =1)
+        pd.delete()  
+
+   
+
+    #count and discounts
+
+    countLike = 0
+    countDislike = 0
+
+    countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
+    
+    countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
+
+    #all Likes and dislikes
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()    
+    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()  
+
+    data = {
+            'AllLikes':allLikes,
+        'AllDisLikes':DisLikes,
+        'countLikes':countLike,
+        'countDislikes':countDislike,
+        }
+  
+    return JsonResponse(data,safe=False)
+     
+      
+
+
+def DisLike(request, post_id):
+    postRev= PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
+    
+    if postRev == 0:
+        ps = PostReview(post_id=post_id, user_id=1,review =0)
+        ps.save()  
+     
+    else:
+        pd = PostReview.objects.filter(post_id = post_id,user_id =1,review =0)
+        pd.delete()  
+      
+    #count and discounts
+
+    countLike = 0
+    countDislike = 0
+
+    countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
+    
+    countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
+
+    #all Likes and dislikes
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()    
+    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()  
+
+    data = {
+            'AllLikes':allLikes,
+        'AllDisLikes':DisLikes,
+        'countLikes':countLike,
+        'countDislikes':countDislike,
+        }
+  
+    return JsonResponse(data,safe=False)   
+    
+

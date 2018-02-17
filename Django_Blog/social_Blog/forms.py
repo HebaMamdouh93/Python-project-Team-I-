@@ -1,4 +1,5 @@
 from django import forms
+<<<<<<< HEAD
 from . import models
 
 
@@ -54,3 +55,29 @@ class edituserForm(forms.ModelForm):
             'is_active': forms.Select(),
         }
 
+=======
+from .models import Comment,ReplyComment
+
+class CommentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Comment
+        fields = ('commmentText',)
+        widgets = {
+        'commmentText': forms.Textarea(attrs={'cols': 40, 'rows': 3}),
+        
+        }
+
+class ReplyForm(forms.ModelForm):
+    
+    class Meta:
+        model = ReplyComment
+        fields = ('replyText',)
+        widgets = {
+        'replyText': forms.Textarea(attrs={'cols': 20, 'rows': 3}),
+        
+        }
+        
+
+        
+>>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81

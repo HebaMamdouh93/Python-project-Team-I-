@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+<<<<<<< HEAD
             name='Category',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -52,6 +53,8 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+=======
+>>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81
             name='User',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -62,6 +65,7 @@ class Migration(migrations.Migration):
                 ('blockType', models.IntegerField()),
             ],
         ),
+<<<<<<< HEAD
         migrations.CreateModel(
             name='UserCat',
             fields=[
@@ -80,4 +84,6 @@ class Migration(migrations.Migration):
             name='user',
             field=models.ForeignKey(to='social_Blog.User'),
         ),
+=======
+>>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81
     ]

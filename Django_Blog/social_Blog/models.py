@@ -18,10 +18,11 @@ class UserCat(models.Model):
         return self.user_id
 
 class Post(models.Model):
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length = 255)
     img = models.FileField()
     title = models.CharField(max_length = 255)
-    date=models.DateTimeField(auto_now_add=True,null=True)
+    publish_date=models.DateTimeField(auto_now_add=True,null=True)
+
     cat = models.ForeignKey(Category,on_delete=models.CASCADE)
 
     def __str__(self):
