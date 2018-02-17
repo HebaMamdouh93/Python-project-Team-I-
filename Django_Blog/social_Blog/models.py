@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-
-
 class Category(models.Model):
     name = models.CharField(max_length = 255)
 
@@ -23,10 +21,8 @@ class Post(models.Model):
     text = models.CharField(max_length = 255)
     img = models.CharField(max_length = 255)
     title = models.CharField(max_length = 255)
-    likes = models.IntegerField(null=True)
-    unLikes = models.IntegerField(null=True)
     publish_date=models.DateTimeField(auto_now_add=True,null=True)
-    cat = models.ForeignKey(Category)
+    cat = models.ForeignKey(Category,on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
@@ -68,3 +64,11 @@ class ReplyComment(models.Model):
 
     def __str__(self):
         return self.replyText
+
+class PostReview(models.Model):
+    post =  models.ForeignKey(Post)
+    user =  models.ForeignKey(User)
+    review = models.IntegerField()
+
+    def __str__(self):
+        return self.review
