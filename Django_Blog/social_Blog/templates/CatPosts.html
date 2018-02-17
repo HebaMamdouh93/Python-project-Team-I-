@@ -64,8 +64,7 @@
             {% for cat in all_Catagories %}
             <div class="list-group-item col-12 row">
                <a href="/social_Blog/{{cat.id}}/showCatPosts/" class="col-6">{{cat.name}}</a>
-               
-               <a class="btn btn-primary col-6" href="/social_Blog/{{cat.id}}/1/subscribe/">Subscribe</a>
+               <button class="btn btn-primary col-6">Subscribe</button>
             </div>
            
             {% endfor %}
@@ -82,7 +81,7 @@
             
             <div class="carousel-inner" role="listbox">
               <div class="carousel-item active">
-                 {% static "images" as imgSrc %}
+                 {% static "" as imgSrc %}
                  <img class="d-block img-fluid" src="{{ imgSrc }}/{{ latest_Post.img }}" width="900px" 
                 height="350px">
                  <div class="carousel-caption d-none d-md-block">
@@ -91,8 +90,7 @@
                 
                 </div>
               </div>
-
-                  {% for post in all_Posts %}
+              {% for post in latest_Posts %}
                 {% if post.id != latest_Post.id %}
                 {% static "" as imgSrc %}
                 <div class="carousel-item">
@@ -119,7 +117,7 @@
               <span class="sr-only">Next</span>
             </a>
           </div>
-           <h1 style="text-align: center;">Top Posts</h1>
+           <h1 style="text-align: center;">Top {{cat_name}} Posts</h1>
           <div class="row">
            
            {% for post in latest_Posts %}

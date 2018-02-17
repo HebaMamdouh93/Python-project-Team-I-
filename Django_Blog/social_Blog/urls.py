@@ -1,23 +1,49 @@
-"""Django_Blog URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.8/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Add an import:  from blog import urls as blog_urls
-    2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
-"""
-from django.conf.urls import url
+#from django.conf.urls import include, url
+from django.conf.urls import include, url ,patterns
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
+    
     url(r'^home/$', views.home),
-    
-    
+
+    url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
+
+
+    url(r'^post/(?P<post_id>[0-9]+)$', views.getPost),
+    url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
+    url(r'^post/addLike/(?P<post_id>[0-9]+)$', views.addLike),  
+    url(r'^post/DisLike/(?P<post_id>[0-9]+)$', views.DisLike), 
+
+    url(r'^posts/$', views.allpost, name='posts'),
+    url(r'^posts/(?P<postId>[0-9]+)/update$', views.editpost),
+    url(r'^posts/(?P<postId>[0-9]+)/delete$', views.delete),
+    url(r'^posts/create$',  views.createpost, name="create"),
+
+    url(r'^categorys/$', views.allcats, name='cats'),
+    url(r'^categorys/(?P<catId>[0-9]+)/update$', views.editcat),
+    url(r'^categorys/(?P<catId>[0-9]+)/delete$', views.deletecat),
+    url(r'^categorys/create$',  views.createcat, name="createcat"),
+
+    url(r'^tags/$', views.alltags, name='tags'),
+    url(r'^tags/(?P<tagId>[0-9]+)/update$', views.edittag),
+    url(r'^tags/(?P<tagId>[0-9]+)/delete$', views.deletetag),
+    url(r'^tags/create$',  views.createtag, name="createtag"),
+
+    url(r'^forbiddenwords/$', views.allwords, name='words'),
+    url(r'^forbiddenwords/(?P<wordId>[0-9]+)/update$', views.editword),
+    url(r'^forbiddenwords/(?P<wordId>[0-9]+)/delete$', views.deleteword),
+    url(r'^forbiddenwords/create$', views.createword, name="createword"),
+
+    url(r'^users/$', views.allusers, name='users'),
+    url(r'^users/(?P<userId>[0-9]+)/update$', views.edituser, name="edituser"),
+    url(r'^users/(?P<userId>[0-9]+)/delete$', views.deleteword),
+    url(r'^users/create$',  views.createuser, name="createuser"),
+
+    url(r'^tags/create_ajax$',  views.createtagAjax, name="ajax_create"),
+
 ]
+
