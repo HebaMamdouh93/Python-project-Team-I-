@@ -22,7 +22,6 @@ class Post(models.Model):
     img = models.FileField()
     title = models.CharField(max_length = 255)
     publish_date=models.DateTimeField(auto_now_add=True,null=True)
-
     cat = models.ForeignKey(Category,on_delete=models.CASCADE)
 
     def __str__(self):

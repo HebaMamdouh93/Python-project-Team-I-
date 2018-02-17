@@ -34,18 +34,11 @@ def delete(request, postId):
 
 
 def createpost(request):
-    #tags = Tag.objects.all()
     form =createPost()
     if request.method == "POST":
         form = createPost(request.POST, request.FILES)
-        #some_var = request.POST.getlist('tag')
         if form.is_valid():
             form.save()
-        #     lastPost= Post.objects.latest('id')
-        #     for ta in some_var:
-        #         existTag=Tag.objects.get(id=ta)
-        #         newposttag = PostTag.objects.create(post=lastPost, tag=existTag)
-        #         newposttag.save()
             return HttpResponseRedirect(reverse('posts'))
     return render(request, 'add.html', {'form': form})
 
