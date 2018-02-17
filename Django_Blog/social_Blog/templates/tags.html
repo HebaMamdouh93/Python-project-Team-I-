@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 margin-tb">
+                    <div class="pull-left">
+                        <h1>All tags</h1>
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="{% url 'createtag' %}" > Create New Tags</a>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>No</th>
+                    <th>name</th>
+                    <th width="280px">Action</th>
+                </tr>
+                    {%  for tag in tags  %}
+                <tr>
+                    <td> {{ tag.id}} </td>
+                    <td> {{ tag.tagName}} </td>
+                    <td>
+                        <a class="btn btn-primary" href="{{tag.id}}/update">Edit</a>
+                        <a class="btn btn-danger" href="{{tag.id}}/delete">Delete</a>
+                    </td>
+                </tr>
+                    {%   endfor %}
+            </table>
+
+        </div>
+    </body>
+</html>

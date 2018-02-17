@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'Django_Blog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangoBlogdb',
+        'NAME': 'blogDB',
         'USER': 'root',
-        'PASSWORD': '123',
+        'PASSWORD': '',
         'HOST': 'localhost', #default host
         'PORT': '3306' #default port
     }
@@ -101,7 +101,9 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'social_Blog/static/images')
+# this line is added and it serves as the root address of uploaded file
+
+MEDIA_URL = '/social_Blog/'

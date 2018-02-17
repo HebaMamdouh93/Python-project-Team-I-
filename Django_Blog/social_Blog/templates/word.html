@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 margin-tb">
+                    <div class="pull-left">
+                        <h1>All Forbidden Words</h1>
+                    </div>
+                    <div class="pull-right">
+                        <a class="btn btn-success" href="{% url 'createword' %}" > Create New Words</a>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>ID</th>
+                    <th>Word</th>
+                    <th>  Length  </th>
+                    <th width="280px">Action</th>
+                </tr>
+                    {%  for word in words  %}
+                <tr>
+                    <td> {{ word.id }} </td>
+                    <td> {{ word.word}} </td>
+                    <td>  {{ word.wordLen }} </td>
+                    <td>
+                        <a class="btn btn-primary" href="{{word.id}}/update">Edit</a>
+                        <a class="btn btn-danger" href="{{word.id}}/delete">Delete</a>
+                    </td>
+                </tr>
+                    {%   endfor %}
+            </table>
+
+        </div>
+    </body>
+</html>
