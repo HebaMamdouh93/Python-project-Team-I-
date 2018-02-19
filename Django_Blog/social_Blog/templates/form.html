@@ -1,8 +1,91 @@
+{% load static %}
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	 <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+    <link rel="stylesheet" href="{% static 'css/shop-homepage.css'%}">
+    <style>
+
+    </style>
+
+</head>
+<body>
+
+	  <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">Social Blog</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item ">
+              <a class="nav-link" href="{% url 'home' %}">Home
+              <!--  <span class="sr-only">(current)</span> -->
+              </a>
+            </li>
+
+
+
+          </ul>
+        </div>
+        </div>
+        </nav>
+
+        <br/>
+
+
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+
+                {% if title %}
+                <h1 class="{% if title_align_center %}text-align-center{% endif %}">{{ title }}</h1>
+                {%endif%}
+
+        <form method='POST' action=''>
+
+          {% csrf_token %}
+          <table >
+            {{ form }}
+          </table>
+<br/>
+
+        <input class="btn btn-primary" type='submit' value='Submit' />
+
+
+
+        </form>
+          </div>
+        </div>
+
+
+
+        <!-- jQuery first then Bootstrap JS -->
+        <script src="{% static 'js/jquery.min.js'%}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+        </body>
+        </html>
 
 
 
 
 
+
+
+
+<!--
 <div class="row">
     <div class="col-sm-6 col-sm-offset-3">
 
@@ -15,6 +98,12 @@
 
 <input class="btn btn-primary" type='submit' value='Submit' />
 
+<br/>
+<br/>
+
+<a href="{% url 'home' %}"> Home </a>
+
 </form>
   </div>
 </div>
+-->

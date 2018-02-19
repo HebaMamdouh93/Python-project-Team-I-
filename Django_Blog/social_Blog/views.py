@@ -7,6 +7,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib.auth import(authenticate,get_user_model,login,logout,)
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render , redirect
+from .forms import UserLoginForm , UserRegisterForm
+from django.contrib.auth import login , authenticate
 
 
 def allpost(request):
@@ -423,9 +428,6 @@ def register_view(request):
 
 		new_user = authenticate(username = user.username , password= password)
 		login(request , new_user)
-
-
-
 
 	context = {"form":form ,
 	"title":title}
