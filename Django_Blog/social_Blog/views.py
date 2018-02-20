@@ -1,4 +1,7 @@
-from django.shortcuts import render,get_object_or_404,HttpResponse ,redirect
+from django.conf import settings
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.shortcuts import render, render_to_response ,get_object_or_404,HttpResponse ,redirect
 from .models import Post,Comment,PostReview,ForbiddenWords,ReplyComment ,Category ,Tag, PostTag ,User
 from django.http import HttpResponseRedirect,request,HttpResponse ,JsonResponse
 from .forms import CommentForm,ReplyForm ,createPost, categoryForm, tagForm, wordForm ,userForm ,edituserForm
@@ -6,7 +9,6 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.conf import settings
 from django.contrib.auth import(authenticate,get_user_model,login,logout,)
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render , redirect
@@ -389,53 +391,42 @@ def DisLike(request, post_id):
 
 
 def login_view(request):
-	if request.method == 'POST':
-		form=AuthenticationForm(data=request.POST)
-		if form.is_valid():
-		#login the user
-			user = form.get_user()
-			login(request,user)
-			return redirect ("/social_Blog/home/")
+    if request.method == 'POST':
+        form=AuthenticationForm(data=request.POST)
+        if form.is_valid():
+        #login the user
+            user = form.get_user()
+            login(request,user)
+            if request.user.is_active:
+                return redirect ("/social_Blog/home/")
 
-	else:
-		form=AuthenticationForm()
-	return render(request,"login.html",{"form":form})
-
-
-
-
-
-
-#	title = "Login"
-#   form = UserLoginForm(request.Post or None)
-#	if form.is_valid():
-	#	username = form.cleaned_data.get("username")
-		#password = form.cleaned_data.get('password')
-
-#	return render(request,"form.html",{"form":form, "title":title})
-
+    else:
+        form=AuthenticationForm()
+    return render(request,"login.html",{"form":form})
 
 
 def register_view(request):
-	print(request.user.is_authenticated())
-	title = "Register"
-	form = UserRegisterForm(request.POST or None)
-	if form.is_valid():
-		user = form.save(commit=False)
-		password = form.cleaned_data.get('password')
-		user.set_password(password)
-		user.save()
+    print(request.user.is_authenticated())
+    title = "Register"
+    form = UserRegisterForm(request.POST or None)
+    if form.is_valid():
+        user = form.save(commit=False)
+        password = form.cleaned_data.get('password')
+        user.set_password(password)
+        user.save()
+        new_user = authenticate(username = user.username , password= password)
+        login(request , new_user)
+        return redirect ("/social_Blog/home/")
 
-		new_user = authenticate(username = user.username , password= password)
-		login(request , new_user)
+    context = {"form":form ,
+    "title":title}
+    return render(request,"form.html",context)
 
-	context = {"form":form ,
-	"title":title}
 
-	return render(request,"form.html",context)
 
 
 
 def logout_view(request):
-	logout(request)
-	return render(request,"logout.html")
+    logout(request)
+    return redirect ("/social_Blog/home/")
+    return render(request,"logout.html")
