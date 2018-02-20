@@ -1,45 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 margin-tb">
-                    <div class="pull-left">
-                        <h1>All categorys</h1>
-                    </div>
-                    <div class="pull-right">
-                        <a class="btn btn-primary" > logout</a>
-                    </div>
-                    <div class="pull-right">
-                        <a class="btn btn-success" href="{% url 'createcat' %}" > Create New Category</a>
-                    </div>
-                </div>
-            </div>
+{% extends  'base.html'    %}
+{% block content %}
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">  
+                            <div class="header">
+                                <h4 class="title">Categorys </h4>
+                                <a  class="btn btn-success pull-right"  href="{% url 'createcat' %}"  > Create </a>
+                            </div>
+                            <div class="content table-responsive table-full-width">
+                                
+                            {% if messages %}
+                                <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                  {% endfor %}
+                                </ul>
+                                {% endif %}
 
-            <table class="table table-bordered">
+            <table class="table table-striped">
+                <thead>
                 <tr>
                     <th>No</th>
                     <th>name</th>
-
                     <th width="280px">Action</th>
                 </tr>
-                    {%  for cat in cats  %}
-                <tr>
-                    <td> {{ cat.id}} </td>
-                    <td> {{ cat.name}} </td>
-
-                    <td>
-                        <a class="btn btn-primary" href="{{cat.id}}/update">Edit</a>
-                        <a class="btn btn-danger" href="{{cat.id}}/delete">Delete</a>
-                    </td>
-                </tr>
+                </thead>
+                <tbody>
+                 {%  for cat in cats  %}
+                    <tr>
+                        <td> {{ forloop.counter}} </td>
+                        <td> {{ cat.name}} </td>
+                        <td>
+                            <a class="btn btn-primary" href="{{cat.id}}/update">Edit</a>
+                            <a class="btn btn-danger" href="{{cat.id}}/delete">Delete</a>
+                        </td>
+                    </tr>
                     {%   endfor %}
+                </tbody>
             </table>
-
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </body>
-</html>
+{%  endblock  %}
+{% block title %} Categorys {%  endblock %}
+
+
