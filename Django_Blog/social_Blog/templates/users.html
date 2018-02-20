@@ -1,62 +1,129 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 margin-tb">
-                    <div class="pull-left">
-                        <h1>All Users</h1>
-                    </div>
-                    <div class="pull-right">
-                        <a class="btn btn-success" href="{% url 'createuser' %}" > Create New User</a>
+{% extends  'base.html'    %}
+{% block content %}
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Posts table </h4>
+                                <a  class="btn btn-success pull-right"  href="{% url 'createuser' %}"  > Create </a>
+                            </div>
+                            <div class="content table-responsive table-full-width">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>username</th>
+                                    <th>email</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Admin or user?</th>
+                                     <th>Blocked or active?</th>
+                                    <th width="280px">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%  for user in users  %}
+                            <tr {% if user.is_superuser == 1 %}
+                                    style="background-color: #e92929"{% endif %}>
+                                <td> {{ forloop.counter}} </td>
+                                <td> {{ user.username}} </td>
+                                <td> {{ user.email}} </td>
+                                <td> {{ user.first_name}} </td>
+                                <td> {{ user.last_name }} </td>
+                                <td>
+                                    {% if user.is_superuser == 1 %}
+                                     Admin
+                                    {%  else %}
+                                        User
+                                    {% endif %}
+                                </td>
+                                <td>
+                                     {% if user.is_active == 1 %}
+                                     Active
+                                    {%  else %}
+                                        Block
+                                    {% endif %}
+                                </td>
+                                <td >
+                                    {% if user.is_superuser == 0 %}
+                                    <a class="btn btn-primary" href="{{ user.id}}/update">Edit</a>
+                                    <a class="btn btn-danger" href="{{ user.id}}/delete">Delete</a>
+
+                                    <button class="btn block" id="block" userid="{{ user.id }}" >
+                                     {% if user.is_active == 0 %}
+                                        Active
+                                         {%  else %}
+                                        Block
+                                        {%  endif %}
+                                    </button>
+                                    <button class="btn admin" id="admin" userid="{{ user.id }}">Promot to admin</button>
+                                    {%  endif %}
+                                </td>
+                            </tr>
+                                {%   endfor %}
+                            </tbody>
+                        </table>
+                                </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered">
-                <tr>
-                    <th>No</th>
-                    <th>username</th>
-                    <th>email</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Admin or user?</th>
-                     <th>Blocked or active?</th>
-                    <th width="280px">Action</th>
-                </tr>
-                    {%  for user in users  %}
-                <tr {% if user.is_superuser == 1 %}
-                        style="background-color: #e92929"{% endif %}>
-                    <td> {{ user.id}} </td>
-                    <td> {{ user.username}} </td>
-                    <td> {{ user.email}} </td>
-                    <td> {{ user.first_name}} </td>
-                    <td> {{ user.last_name }} </td>
-                    <td>
-                        {% if user.is_superuser == 1 %}
-                         Admin
-                        {%  else %}
-                            User
-                        {% endif %}
-                    </td>
-                    <td>
-                         {% if user.is_active == 1 %}
-                         Active
-                        {%  else %}
-                            Blocked
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a class="btn btn-primary" href="{{ user.id}}/update">Edit</a>
-                        <a class="btn btn-danger" href="{{ user.id}}/delete">Delete</a>
-                    </td>
-                </tr>
-                    {%   endfor %}
-            </table>
-
         </div>
-    </body>
-</html>
+
+{%  endblock  %}
+{% block scripts %}
+<script>
+        $(document).ready(function(){
+
+         $('.block').on('click' , function(){
+         var userId= $(this).attr("userid")
+            $.ajax({
+                url:"{% url 'block' %}",
+                data:{ 'id' :userId },
+                type: 'GET',
+                success: function(data){
+                    id =data.userid
+                     var btn= $(".block[userid="+id+" ]")
+                     var prevtd = $(btn).parent().prev()
+                    if(data.is_active ==0)
+                    {
+                        $(btn).html("Active")
+                        $(prevtd).html("Block")
+                    }
+                    else
+                    {
+                         $(btn).html("Block")
+                         $(prevtd).html("Active")
+                    }
+                },
+           });
+         });
+          $('.admin').on('click' , function(){
+          console.log("sss")
+          var userId= $(this).attr("userid")
+           $.ajax({
+                url: "{% url 'promottoadmin' %}" ,
+                data: { 'id' :userId } ,
+                type: 'GET',
+                success: function(data){
+                      var  id =data.userid
+                      var td= $("td button[userid="+id+" ]").parent()
+                      var tdadmin= $(td).prev().prev()
+                      $(tdadmin).html("Admin")
+                      $(td).children().remove()
+                      var row = $(td).parent("tr")
+                      $(row).css('backgroundColor' , '#e92929')
+                      console.log(tdprev)
+                }
+           });
+          });
+        });
+    </script>
+{%  endblock  %}
+
+
+
+
+

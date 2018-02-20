@@ -5,12 +5,13 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     
     url(r'^home/$', views.home),
 
     url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
+
+    url(r'^dashbord/$', views.adminhome, name='dashbord'),
 
 
     url(r'^post/(?P<post_id>[0-9]+)$', views.getPost),
@@ -40,10 +41,12 @@ urlpatterns = [
 
     url(r'^users/$', views.allusers, name='users'),
     url(r'^users/(?P<userId>[0-9]+)/update$', views.edituser, name="edituser"),
-    url(r'^users/(?P<userId>[0-9]+)/delete$', views.deleteword),
+    url(r'^users/(?P<userId>[0-9]+)/delete$', views.deleteuser),
     url(r'^users/create$',  views.createuser, name="createuser"),
 
-    url(r'^tags/create_ajax$',  views.createtagAjax, name="ajax_create"),
+    url(r'^users/block$',  views.block, name="block"),
+    url(r'^users/promottoadmin$',  views.promottoadmin, name="promottoadmin"),
 
+    url(r'^tags/create_ajax$',  views.createtagAjax, name="ajax_create"),
 ]
 
