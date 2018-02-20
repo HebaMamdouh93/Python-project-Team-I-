@@ -15,9 +15,11 @@
                         {% if tag.id in list %}
                         <label>{{ tag.tagName }}</label>
                         <input name="tag" type="checkbox" value="{{ tag.id }}" checked>
+                        
                         {% else %}
                         <label>{{ tag.tagName }}</label>
                         <input name="tag" type="checkbox" value="{{ tag.id }}">
+                        
                         {% endif %}
                         {% endfor %}
                     </div>
@@ -31,3 +33,4 @@
 
 
 {% endblock %}
+

@@ -23,7 +23,6 @@ def allpost(request):
     context = {'posts': posts, 'tags': tags}
     return render(request, "posts.html", context)
 
-
 def editpost(request, postId):
     post = get_object_or_404(Post, id=postId)
     tags = Tag.objects.all()
@@ -43,14 +42,15 @@ def editpost(request, postId):
                 existTag = Tag.objects.get(id=ta)
                 newposttag = PostTag.objects.create(post=post, tag=existTag)
                 newposttag.save()
+            messages.success(request, "Successfully Edited post", extra_tags='')
             return HttpResponseRedirect(reverse('posts'))
     return render(request, 'editpost.html', {'form': form, 'tags': tags, 'list': list})
+
 
 def delete(request, postId):
     post = Post.objects.get(id=postId)
     post.delete()
-    oldposttag = PostTag.objects.filter(post=postId)
-    oldposttag.delete()
+    messages.success(request, "Successfully Deleted Post", extra_tags='')
     return  HttpResponseRedirect(reverse('posts'))
 
 def createpost(request):
@@ -66,6 +66,7 @@ def createpost(request):
                 existTag=Tag.objects.get(id=ta)
                 newposttag = PostTag.objects.create(post=lastpost, tag=existTag)
                 newposttag.save()
+            messages.success(request, "Successfully Created new post", extra_tags='')
             return HttpResponseRedirect(reverse('posts'))
     return render(request, 'addpost.html', {'form': form, 'tags':tags})
 
@@ -82,7 +83,7 @@ def createcat(request):
         if form.is_valid():
             cat = form.save(commit=False)
             cat.save()
-            messages.success(request, "Successfully added Category", extra_tags='')
+            messages.success(request, "Successfully Created  new Category", extra_tags='')
             return HttpResponseRedirect(reverse('cats'))
     return render(request, 'addcat.html', {'form': form})
 
@@ -105,7 +106,6 @@ def editcat(request ,catId):
         form = categoryForm(instance=cat)
     return render(request, 'addcat.html', {'form': form})
 
-
 def alltags(request):
     tags = Tag.objects.all()
     cont ={"tags" : tags}
@@ -118,7 +118,7 @@ def createtag(request):
         form = tagForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Successfully added Tag", extra_tags='')
+            messages.success(request, "Successfully created new Tag", extra_tags='')
             return HttpResponseRedirect(reverse('tags'))
     return render(request, 'addtag.html', {'form': form})
 
@@ -139,6 +139,7 @@ def deletetag(request, tagId):
     tag.delete()
     messages.success(request, "Successfully Deleted Tag", extra_tags='')
     return HttpResponseRedirect(reverse('tags'))
+
 
 
 def createtagAjax(request):
@@ -169,6 +170,7 @@ def deleteword(request, wordId):
     messages.success(request, "Successfully Deleted Forbidden Word", extra_tags='')
     return HttpResponseRedirect(reverse('words'))
 
+
 def editword(request, wordId):
     word = get_object_or_404(ForbiddenWords, id=wordId)
     if request.method == "POST":
@@ -177,11 +179,11 @@ def editword(request, wordId):
             word = form.save(commit=False)
             word.wordLen = len(word.word)
             word.save()
+            messages.success(request, "Successfully Edited word", extra_tags='')
             return HttpResponseRedirect(reverse('words'))
     else:
         form = wordForm(instance=word)
     return render(request, 'addword.html', {'form': form})
-
 
 def allusers(request):
     users = User.objects.all()
@@ -197,13 +199,14 @@ def createuser(request):
             user.is_active = 1
             user.set_password(request.POST['password'])
             user.save()
-            messages.success(request, "Successfully added new user", extra_tags='')
+            messages.success(request, "Successfully created new user", extra_tags='')
             return HttpResponseRedirect(reverse('users'))
     return render(request, 'adduser.html', {'form': form})
 
 def deleteuser(request ,userId):
     user = User.objects.get(id=userId)
     user.delete()
+    messages.success(request, "Successfully Deleted user", extra_tags='')
     return HttpResponseRedirect(reverse('users'))
 
 def edituser(request ,userId):
@@ -212,6 +215,7 @@ def edituser(request ,userId):
         form = edituserForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
+            messages.success(request, "Successfully Edited user", extra_tags='')
             return HttpResponseRedirect(reverse('users'))
     else:
         form = edituserForm(instance=user)

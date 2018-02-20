@@ -47,6 +47,8 @@ urlpatterns = [
     url(r'^users/block$',  views.block, name="block"),
     url(r'^users/promottoadmin$',  views.promottoadmin, name="promottoadmin"),
 
+
     url(r'^tags/create_ajax$',  views.createtagAjax, name="ajax_create"),
+
 ]
 

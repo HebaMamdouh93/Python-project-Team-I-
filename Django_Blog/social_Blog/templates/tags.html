@@ -9,6 +9,13 @@
                                 <h4 class="title">Tags </h4>
                                 <a  class="btn btn-success pull-right"  href="{% url 'createtag' %}"  > Create </a>
                             </div>
+                            {% if messages %}
+                                <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                  {% endfor %}
+                                </ul>
+                                {% endif %}
                             <div class="content table-responsive table-full-width">
                                 <table class="table table-striped">
                                     <thead>

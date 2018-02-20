@@ -10,6 +10,13 @@
                                 <h4 class="title">Posts table </h4>
                                 <a  class="btn btn-success pull-right"  href="{% url 'create' %}"  > Create </a>
                             </div>
+                            {% if messages %}
+                                <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                  {% endfor %}
+                                </ul>
+                                {% endif %}
                             <div class="content table-responsive table-full-width">
                                 <table class="table table-striped">
                                     <thead>
@@ -58,4 +65,5 @@
 
 {%  endblock  %}
 {% block title %} Posts {%  endblock %}
+
 

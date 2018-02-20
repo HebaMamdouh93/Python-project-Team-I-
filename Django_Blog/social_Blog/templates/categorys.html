@@ -4,19 +4,20 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="card">
+                        <div class="card">  
                             <div class="header">
                                 <h4 class="title">Categorys </h4>
                                 <a  class="btn btn-success pull-right"  href="{% url 'createcat' %}"  > Create </a>
                             </div>
                             <div class="content table-responsive table-full-width">
-            {% if messages %}
-                <ul class="messages">
-            {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                  {% endfor %}
-                </ul>
-                {% endif %}
+                                
+                            {% if messages %}
+                                <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                  {% endfor %}
+                                </ul>
+                                {% endif %}
 
             <table class="table table-striped">
                 <thead>
