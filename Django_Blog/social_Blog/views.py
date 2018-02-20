@@ -197,6 +197,18 @@ def home (request):
 	all_Posts=Post.objects.all()
 	latest_Posts=Post.objects.all().order_by('-publish_date')[:3:1]
 	latest_Post=Post.objects.all().order_by('-publish_date')[:1].get()
+
+    page = request.GET.get('page', 4)
+
+    paginator = Paginator(latest_Posts,5)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(4)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+
 	context={"all_Catagories":all_Catagories ,
 	"latest_Posts":latest_Posts,
 	"all_Posts":all_Posts,
