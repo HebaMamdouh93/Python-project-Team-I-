@@ -74,7 +74,7 @@ class ReplyForm(forms.ModelForm):
         model = ReplyComment
         fields = ('replyText',)
         widgets = {
-        'replyText': forms.Textarea(attrs={'cols': 20, 'rows': 3}),
+        'replyText': forms.Textarea(attrs={'cols': 10, 'rows': 3}),
 
         }
 

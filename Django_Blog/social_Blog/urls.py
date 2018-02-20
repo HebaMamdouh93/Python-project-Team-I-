@@ -4,17 +4,18 @@ from django.conf.urls import include, url ,patterns
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from social_Blog.views import login_view
 
 
 urlpatterns = [
 
-    url(r'^home/$', views.home),
-
+    #url(r'^home/$', views.home),
+    url(r'^home/$', views.home ,name="home"),
     url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
 
 
     url(r'^post/(?P<post_id>[0-9]+)$', views.getPost),
-    url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
+    url(r'^post/comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
     url(r'^post/addLike/(?P<post_id>[0-9]+)$', views.addLike),
     url(r'^post/DisLike/(?P<post_id>[0-9]+)$', views.DisLike),
 
@@ -48,6 +49,7 @@ urlpatterns = [
      url(r'^login/$', views.login_view, name="login"),
     url(r'^register/$', views.register_view, name="register"),
     url(r'^logout/$', views.logout_view, name="logout"),
+    
     
 
 ]
