@@ -38,7 +38,7 @@
                  <td><img  width="100px" height="100px" src="{% static 'images' %}/{{post.img}}"  /></td>
                     <td>{{ post.text}}</td>
                     <td> {{ post.cat}}</td>
-                     <td>{{ post.date}}</td>
+                     <td>{{ post.publish_date}}</td>
                     <td>
                         <a class="btn btn-primary" href="{{post.id}}/update">Edit</a>
                         <a class="btn btn-danger" href="{{post.id}}/delete">Delete</a>

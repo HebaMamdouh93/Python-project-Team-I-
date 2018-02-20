@@ -15,14 +15,13 @@ class UserCat(models.Model):
     cat = models.ForeignKey(Category)    
 
     def __str__(self):
-        return self.user_id
+        return str(self.user_id)
 
 class Post(models.Model):
     text = models.CharField(max_length = 255)
     img = models.FileField()
     title = models.CharField(max_length = 255)
     publish_date=models.DateTimeField(auto_now_add=True,null=True)
-
     cat = models.ForeignKey(Category,on_delete=models.CASCADE)
 
     def __str__(self):

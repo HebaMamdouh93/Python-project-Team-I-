@@ -1,0 +1,14 @@
+
+<h1>Logged out</h1>
+<br/>
+
+{% block content %}
+
+<div class="alert alert-success" role= "alert">
+  <strong> You are logged out </strong>
+</div>
+<a href="{% url 'login' %}"> Login </a>
+<a href="{% url 'home' %}"> Home </a>
+
+
+{% endblock%}

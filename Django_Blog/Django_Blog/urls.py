@@ -20,17 +20,10 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-<<<<<<< HEAD
-    #url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^social_Blog/', include("social_Blog.urls")),
     url(r'^admin2/', include('social_Blog.urls')),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-=======
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^social_Blog/', include("social_Blog.urls"))
-]
+#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
-
->>>>>>> 08a132deec82ef1542a7ef806982a018ea60ce81

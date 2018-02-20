@@ -34,18 +34,11 @@ def delete(request, postId):
 
 
 def createpost(request):
-    #tags = Tag.objects.all()
     form =createPost()
     if request.method == "POST":
         form = createPost(request.POST, request.FILES)
-        #some_var = request.POST.getlist('tag')
         if form.is_valid():
             form.save()
-        #     lastPost= Post.objects.latest('id')
-        #     for ta in some_var:
-        #         existTag=Tag.objects.get(id=ta)
-        #         newposttag = PostTag.objects.create(post=lastPost, tag=existTag)
-        #         newposttag.save()
             return HttpResponseRedirect(reverse('posts'))
     return render(request, 'add.html', {'form': form})
 
@@ -192,31 +185,104 @@ def edituser(request ,userId):
 
 # Create your views here.
 def home (request):
-	#return HttpResponse("<h1>Home Page</h1>")
-	all_Catagories=Category.objects.all()
-	all_Posts=Post.objects.all()
-	latest_Posts=Post.objects.all().order_by('-publish_date')[:3:1]
-	latest_Post=Post.objects.all().order_by('-publish_date')[:1].get()
-	context={"all_Catagories":all_Catagories ,
-	"latest_Posts":latest_Posts,
-	"all_Posts":all_Posts,
-	"latest_Post":latest_Post}
-	return render(request,"home.html",context)
+    current_user = request.user.id
+    checkUsersubscribe=[]
+    checkUsersubscribeQuery=UserCat.objects.filter(user_id=current_user)
+
+    for check in checkUsersubscribeQuery:
+        checkUsersubscribe.append(check.cat_id)
+
+    all_Catagories=Category.objects.all()
+    all_Posts=Post.objects.all()
+    latest_Posts=Post.objects.all().order_by('-publish_date')
+    latest_Post=Post.objects.all().order_by('-publish_date')[:1].get()
+    postsID=[]
+    all_Tags=[]
+    query=request.GET.get("search")
+    if query:
+        latest_Posts=all_Posts.filter(title__icontains=query)
+        all_Tags=Tag.objects.all().filter(tagName__icontains=query)
+        if(all_Tags):
+        
+            for tag in all_Tags:
+                qResult=PostTag.objects.all().filter(tag_id=tag.id)
+                postsID.append(qResult)
+
+            for post in postsID[0]:
+                qResult=all_Posts.filter(id=post.post_id)
+                latest_Posts = latest_Posts | qResult 
+               
+
+    page = request.GET.get('page', 4)
+
+    paginator = Paginator(latest_Posts,5)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(4)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    context={"all_Catagories":all_Catagories ,
+    "checkUsersubscribe":checkUsersubscribe ,
+    "latest_Posts":latest_Posts,
+    "all_Posts":all_Posts,
+    "all_Tags":all_Tags,
+    "posts":posts,
+    "postsID":postsID,
+    "latest_Post":latest_Post}
+    return render(request,"home.html",context)
 
 
 
 def showCatPosts(request,cat_id):
-	#return HttpResponse("<h1>showCatPosts</h1>")
-	cat_name=Category.objects.get(id=cat_id).name
-	all_Catagories=Category.objects.all()
-	#cat_Posts=Post.objects.filter(cat_id=cat_id)
-	latest_Posts=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')
-	latest_Post=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')[:1].get()
-	context={"all_Catagories":all_Catagories ,
-	"latest_Posts":latest_Posts,
-	"latest_Post":latest_Post,
-	"cat_name":cat_name}
-	return render(request,"CatPosts.html",context)	
+    #return HttpResponse("<h1>showCatPosts</h1>")
+    current_user = request.user.id
+     #print current_user
+    checkUsersubscribe=UserCat.objects.filter(user_id=current_user)
+    cat_name=Category.objects.get(id=cat_id).name
+    all_Catagories=Category.objects.all()
+    latest_Posts=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')
+    latest_Post=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')[:1].get()
+    context={"all_Catagories":all_Catagories ,
+    "checkUsersubscribe":checkUsersubscribe,
+    "latest_Posts":latest_Posts,
+    "latest_Post":latest_Post,
+    "cat_name":cat_name}
+    return render(request,"CatPosts.html",context)
+
+
+
+############## Subscribe with Ajax ###########################
+@csrf_exempt
+def subscribe(request):
+
+    userID = request.POST.get('userID', None)
+    catID = request.POST.get('catID', None)
+    catName = request.POST.get('catName', None)
+    UserCat.objects.create(cat_id=catID, user_id=userID)
+    subject="Confirmation email from django"
+    message="you successfully subscribed in "+catName+" category all posts related to this category will display on your home page "
+    emailFrom=settings.EMAIL_HOST_USER
+    emailTo=[request.user.email]
+    send_mail(subject, message, emailFrom,emailTo,fail_silently=True)
+    data = {
+        'success': True
+    }
+    return JsonResponse(data)
+
+############## unSubscribe with Ajax ###########################
+@csrf_exempt
+def unsubscribe(request):
+    
+    userID = request.POST.get('userID', None)
+    catID = request.POST.get('catID', None)
+    #UserCat.objects.create(cat_id=catID, user_id=userID)
+    UserCat.objects.filter(cat_id=catID, user_id=userID).delete()
+    data = {
+        'success': True
+    }
+    return JsonResponse(data)
 
 def draw(len):
     i=1
@@ -225,8 +291,8 @@ def draw(len):
         newword += "*"
         i += 1
     return newword
-                
-        
+
+
 def getPost(request, post_id):
 
     #post
@@ -240,24 +306,24 @@ def getPost(request, post_id):
     countDislike = 0
 
     countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count() #count likes to exist user
-    
+
     countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count() #count dislikes to exist user
 
     #all Likes and dislikes
-    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()#alllikes to this post in server    
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()#alllikes to this post in server
     DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()#alldisikes to this post in server
- 
-    #get bad words from db 
+
+    #get bad words from db
     all_words = ForbiddenWords.objects.all()
 
     #comments on post
     all_comments = Comment.objects.filter(post = post_id)
     form = CommentForm()
     formReply = ReplyForm()
-   
+
 
     if request.method == "POST":
-        
+
         form = CommentForm(request.POST)
         if form.is_valid():
             all_comments = form.save(commit=False)
@@ -272,9 +338,9 @@ def getPost(request, post_id):
             form.save() #save post (comment,postID,userID)
 
             return HttpResponseRedirect('/social_Blog/post/'+post_id)
-    
-   
-	
+
+
+
     context = {
         'AllLikes':allLikes,
         'AllDisLikes':DisLikes,
@@ -287,16 +353,16 @@ def getPost(request, post_id):
         'AllReplies':all_replies,
     }
     return render(request, 'post/post_details.html', context)
-    
+
 def reply(request,comment_id,post_id):
-     #get bad words from db 
+     #get bad words from db
     all_words = ForbiddenWords.objects.all()
 
     #replies on comment
     all_replies = ReplyComment.objects.filter(comment = comment_id)
     formReply = ReplyForm()
     if request.method == "POST":
-        
+
         formReply = ReplyForm(request.POST)
         if formReply.is_valid():
             all_replies = formReply.save(commit=False)
@@ -308,26 +374,26 @@ def reply(request,comment_id,post_id):
             #messages.info(request, myText)
             all_replies.replyText = myText
 
-           
+
             formReply.save() #save post (comment,postID,userID)
             return HttpResponseRedirect('/social_Blog/post/'+post_id)
- 
-    
+
+
 def addLike(request,post_id):
-   
+
     messages.info(request, post_id)
     postRev= PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
     p = PostReview(post_id=post_id, user_id=1,review =1)
-    
+
     if postRev == 0:
         ps = PostReview(post_id=post_id, user_id=1,review =1)
-        ps.save()  
-     
+        ps.save()
+
     else:
         pd = PostReview.objects.filter(post_id = post_id,user_id =1,review =1)
-        pd.delete()  
+        pd.delete()
 
-   
+
 
     #count and discounts
 
@@ -335,12 +401,12 @@ def addLike(request,post_id):
     countDislike = 0
 
     countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
-    
+
     countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
 
     #all Likes and dislikes
-    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()    
-    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()  
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()
+    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()
 
     data = {
             'AllLikes':allLikes,
@@ -348,35 +414,35 @@ def addLike(request,post_id):
         'countLikes':countLike,
         'countDislikes':countDislike,
         }
-  
+
     return JsonResponse(data,safe=False)
-     
-      
+
+
 
 
 def DisLike(request, post_id):
     postRev= PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
-    
+
     if postRev == 0:
         ps = PostReview(post_id=post_id, user_id=1,review =0)
-        ps.save()  
-     
+        ps.save()
+
     else:
         pd = PostReview.objects.filter(post_id = post_id,user_id =1,review =0)
-        pd.delete()  
-      
+        pd.delete()
+
     #count and discounts
 
     countLike = 0
     countDislike = 0
 
     countLike = PostReview.objects.filter(post_id = post_id,user_id =1,review =1).count()
-    
+
     countDislike = PostReview.objects.filter(post_id = post_id,user_id =1,review =0).count()
 
     #all Likes and dislikes
-    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()    
-    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()  
+    allLikes = PostReview.objects.filter(post_id = post_id,review =1).count()
+    DisLikes = PostReview.objects.filter(post_id = post_id,review =0).count()
 
     data = {
             'AllLikes':allLikes,
@@ -384,7 +450,63 @@ def DisLike(request, post_id):
         'countLikes':countLike,
         'countDislikes':countDislike,
         }
-  
-    return JsonResponse(data,safe=False)   
-    
 
+    return JsonResponse(data,safe=False)
+
+
+
+
+def login_view(request):
+	if request.method == 'POST':
+		form=AuthenticationForm(data=request.POST)
+		if form.is_valid():
+		#login the user
+			user = form.get_user()
+			login(request,user)
+			return redirect ("/social_Blog/home/")
+
+	else:
+		form=AuthenticationForm()
+	return render(request,"login.html",{"form":form})
+
+
+
+
+
+
+#	title = "Login"
+#   form = UserLoginForm(request.Post or None)
+#	if form.is_valid():
+	#	username = form.cleaned_data.get("username")
+		#password = form.cleaned_data.get('password')
+
+#	return render(request,"form.html",{"form":form, "title":title})
+
+
+
+def register_view(request):
+	print(request.user.is_authenticated())
+	title = "Register"
+	form = UserRegisterForm(request.POST or None)
+	if form.is_valid():
+		user = form.save(commit=False)
+		password = form.cleaned_data.get('password')
+		user.set_password(password)
+		user.save()
+
+		new_user = authenticate(username = user.username , password= password)
+		login(request , new_user)
+
+
+
+
+	context = {"form":form ,
+	"title":title}
+
+	return render(request,"form.html",context)
+
+
+
+def logout_view(request):
+	logout(request)
+	return render(request,"logout.html")
