@@ -218,6 +218,24 @@ def showCatPosts(request,cat_id):
 	"cat_name":cat_name}
 	return render(request,"CatPosts.html",context)
 
+############## Subscribe with Ajax ###########################
+@csrf_exempt
+def subscribe(request):
+
+    userID = request.POST.get('userID', None)
+    catID = request.POST.get('catID', None)
+    catName = request.POST.get('catName', None)
+    UserCat.objects.create(cat_id=catID, user_id=userID)
+    subject="Confirmation email from django"
+    message="you successfully subscribed in "+catName+" category all posts related to this category will display on your home page "
+    emailFrom=settings.EMAIL_HOST_USER
+    emailTo=[request.user.email]
+    send_mail(subject, message, emailFrom,emailTo,fail_silently=True)
+    data = {
+        'success': True
+    }
+    return JsonResponse(data)
+
 def draw(len):
     i=1
     newword = "*"
