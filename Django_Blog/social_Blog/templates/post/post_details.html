@@ -9,6 +9,9 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
     <link rel="stylesheet" href="{% static 'css/shop-homepage.css'%}">
+    
+    <script src="{% static 'js/e3c259ddc3.js'%}"></script>
+    <!--<script defer src="/static/fontawesome/fontawesome-all.js"></script>-->
    <style> 
 .panel, .flip {
     padding: 5px;
@@ -21,46 +24,89 @@
     padding: 50px;
     display: none;
 }
+
+#like-icon, #dislike-icon {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+}
+.replay-continaner{
+    margin-left:50px;
+    border: solid 1px #ccc;
+}
 </style>
    
 </head>
 <body>
 
+
  <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div class="container">
         <a class="navbar-brand" href="#">Social Blog</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+       
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home
+              <a class="nav-link" href="{% url 'home' %}">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
+            {% if not user.is_authenticated %} 
             <li class="nav-item">
-              <a class="nav-link" href="#">Login</a>
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Register</a>
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
             </li>
+            {% else %} 
             <li class="nav-item">
-              <a class="nav-link" href="#">Logout</a>
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
             </li>
+             {% endif %}
+
+            {% if user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="#">Manage Blog</a>
+              <a class="nav-link" href="{% url 'dashbord' %}">Manage Blog</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </nav>
+
 <!-- Page Content -->
 
+ <div class="col-lg-3">
+
+          <h1 class="my-4">All Catagories</h1>
+          <div class="list-group row">
+            {% for cat in all_Catagories %}
+            <div class="list-group-item col-12 row">
+               <a href="/social_Blog/{{cat.id}}/showCatPosts/" class="col-6">{{cat.name}}</a>
+               {% if user.is_authenticated %}
+               <a class="btn btn-primary col-6" href="/social_Blog/{{cat.id}}/1/subscribe/">Subscribe</a>
+               {% endif %}
+            </div>
+           
+            {% endfor %}
+           
+           
+          </div>
+
+        </div>
+
+<div id="alerts"></div>
 <div class="row text-center">
            
-            <div class="col-lg-4 col-md-6 mb-4 col-centered justify-content-between">
+            <div class="col-lg-4 col-md-6 mb-4 offset-4 col-centered justify-content-between">
               <div class="card ">
                 <h4 class="post-title card-title">
                     {{post.cat.name}}
@@ -74,15 +120,54 @@
                   <p class="card-text">{{post.text}}</p>
        <input type="hidden" value="{{post.id}}" id="post_id"></input>
 
-<div style=align:left>
+<!--button like disable-->
+{% if user.is_authenticated %}
 
-<a id="like-icon" value="{{post.id}}" style="display: {% if countLikes == 0 and countDislikes != 0 %} none {% endif %} ;"><img src="{% static "images/like.png" %}"/></a>
+ <div style=align:left>
 
-<a id="dislike-icon" value="{{post.id}}" style="display: {% if countDislikes == 0 and countLikes != 0 %} none {% endif %} ;"><img src="{% static "images/disLike.png" %}"/></a>
-
+{% if disableDislike == "invisible" %}
+<button id="like-icon" value="{{post.id}}" disabled>
+{% if countLikes == 0  %}
+<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+{% else %}
+<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+{% endif %}
+</button>
+<!--button like enable-->
+{% else %}
+<button id="like-icon" value="{{post.id}}">
+{% if countLikes == 0  %}
+<i class="fa fa-thumbs-o-up" aria-hidden="true"></i>
+{% else %}
+<i class="fa fa-thumbs-up" aria-hidden="true"></i>
+{% endif %}
+{% endif %}
+</button>
+<!---------------------------------------------->
+{% if disableLike == "invisible" %}
+<button id="dislike-icon" value="{{post.id}}" disabled >
+{% if countDislikes == 0 %}
+<i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+{% else %}
+<i class="fa fa-thumbs-down" aria-hidden="true"></i>
+{% endif %}
+</button>
+<!---------------------------------------------->
+{% else %}
+<button id="dislike-icon" value="{{post.id}}" >
+{% if countDislikes == 0 %}
+<i class="fa fa-thumbs-o-down" aria-hidden="true"></i>
+{% else %}
+<i class="fa fa-thumbs-down" aria-hidden="true"></i>
+{% endif %}
+</button>
+{% endif %}
+{% endif %}
 </div>
-<input type="text" id="count-likes" value="{{AllLikes}}" size="1"></input>
-<input type="text" id="count-dislikes" value="{{AllDisLikes}}" size="1"></input>
+
+
+Likes : <input type="text" id="count-likes" value="{{AllLikes}}" size="1" disabled style="width: 30px; height: 35px;"></input>
+DisLikes : <input type="text" id="count-dislikes" value="{{AllDisLikes}}" size="1" disabled style="width: 30px; height: 35px;"></input>
 
                 </div>
                 
@@ -90,57 +175,80 @@
 
             </div>
 
-</div>
 
+    <div class="col-4 offset-4">
+{%  for tag in AllTags  %}
+ <span>Related Tags :</span><a href="#">{{tag.tag.tagName}}</a>
+ </br>
+{% endfor %}
+<div class="col-12 justify-content-between">
+<div class="mycommentcls" id="commentDiv" comId="{{comments.id}}">
 {%  for comments in all_comments  %}
-<div class="row container">
            
-            <div class="col-lg-4 col-md-6 mb-4 col-centered justify-content-between">
-              <div class="card">
+            
+              <div class="card" comment-id = "{{comments.id}}">
                 <h4 class="post-title card-title">
-                    omnia
+                    {{comments.user.username}}
                   </h4>
                 
                 
                   <p class="card-text">{{comments.commmentText}}</p>
                   <h6 class="card-text text-right">{{comments.comTime}}<h6>
+                          </div>
+<div id ="all-replies-{{comments.id}}">
+     <div class="replyDiv">
  {%  for reply in AllReplies  %}  
     {% if reply.comment_id == comments.id %}
+  
       <h5 class="post-title card-title">
-                    omnia
+                    {{reply.user.username}}
                   </h5>
-                
-                
                   <p class="card-text">{{reply.replyText}}</p>
                   <h6 class="card-text text-right">{{reply.repTime}}<h6>
-    {% endif%} 
- {% endfor%}           
-              </div>
-<div class="flip">reply</div>
-<div class="form-group container panel">
-  <form method="POST" action="/social_Blog/comment/{{comments.id}}/{{post.id}}">{% csrf_token %}
-{{formReply.as_p }}
-<button type="submit" >Save</button>
-</form>
-</div> 
-            </div>
+                          <hr/>
 
+    {% endif%} 
+ {% endfor%} 
+ </div>
 </div>
+ {% if user.is_authenticated %}
+
+<div class="replay">
+<button class="btn-danger flip" >reply</button>
+<div class="form-group container panel" >
+<input type="hidden" value ={{comments.id}} class="commId"/>
+<input type="hidden" value ={{post.id}} class="postId"/>
+<textarea class="form-control reply-text" rows="5" ></textarea>
+<button class="reply-button" >Save</button>
+</div> 
+</div>
+{% endif %}
+     
+              
+
+
+            
 
 
 {%  endfor  %}
-
-<div class="form-group container" >
-  <form method="POST">{% csrf_token %}
+</div>
+</div>
+<div class="col-12 ">
+{% if user.is_authenticated %}
+<div class="form-group container"  >
+  <form method="POST" id="commentForm">{% csrf_token %}
 {{form.as_p }}
 <button type="submit" >Save</button>
 </form>
 </div> 
-
+{% endif %}
+</div>
+</div>
+    </div>
 <!-- Footer -->
     <footer class="py-5 bg-dark">
       <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+        <p class="m-0 text-center text-white">Copyright &copy; Social Blog 2018</p>
       </div>
       <!-- /.container -->
     </footer>
@@ -148,6 +256,9 @@
  <!-- jQuery first then Bootstrap JS -->
 	<script src="{% static 'js/jquery.min.js'%}"></script>
   <script src="{% static 'js/jquery-3.1.1.js'%}"></script>
+
+
+
 <script>
 $("#like-icon").click(function () {
             console.log("clicked")
@@ -165,32 +276,36 @@ $("#like-icon").click(function () {
                 success: function (response) {
                 //alert("response" + response);
                  //alert(response.AllLikes)
-                 if (response.countLikes == 0 && response.countDislikes != 0 )
+                 if (response.countLikes == 0 )
                     {
-                       $('#like-icon').hide() 
+                        //append un lighted hand 
+      
+   $('#like-icon').html("<a id='like-icon' value='"+post_id+"'> <i class='fa fa-thumbs-o-up' aria-hidden='true'></i> </a>");
+
+                      //append visible button  
+ 
+$('#dislike-icon').prop('disabled', false);       
                       
                     }
 
-                    if (response.countLikes == 0 && response.countDislikes == 0 )
+                   else
                     {
-                      
-                       $('#dislike-icon').show()
+                        //append lighted hand
+      
+$('#like-icon').html("<a id='like-icon' value='"+post_id+"'> <i class='fa fa-thumbs-up' aria-hidden='true'></i> </a>");
+
+                         //append invisible button 
+
+$('#dislike-icon').attr("disabled","disabled");  
+  
+
                     }
+
 
                 
-                 if (response.countDislikes == 0 && response.countLikes != 0 )
-                    {
-                       $('#dislike-icon').hide()    
-                        
-                    }
-        
-                  if (response.countDislikes == 0 && response.countLikes == 0 )
-                    {
-                         
-                       $('#like-icon').show() 
-                    }
-                   $("#count-likes").val(response.countLikes)
-                   $("#count-dislikes").val(response.countDislikes)
+                 
+                   $("#count-likes").val(response.AllLikes)
+                   $("#count-dislikes").val(response.AllDisLikes)
                 },
 
                error: function (ex) {
@@ -200,14 +315,6 @@ $("#like-icon").click(function () {
             });
             console.log("aftter")
         });
-</script>
-
-<script> 
-$(document).ready(function(){
-    $(".flip").click(function(){
-        $(".panel").slideToggle("slow");
-    });
-});
 </script>
 
 <script>
@@ -227,32 +334,38 @@ $("#dislike-icon").click(function () {
                 success: function (response) {
                 //alert("response" + response);
                  //alert(response.AllLikes)
-                 if (response.countLikes == 0 && response.countDislikes != 0 )
+                 if(response.AllDisLikes == 10)
+                 {
+                  location.href = "http://localhost:8000/social_Blog/home"
+                 }
+     
+                 if (response.countDislikes == 0  )
                     {
-                       $('#like-icon').hide() 
+
+    $('#dislike-icon').html("<a id='dislike-icon' value='"+post_id+"'> <i class='fa fa-thumbs-o-down' aria-hidden='true'></i></a>");
+               
+            //append visible button  
+ 
+$('#like-icon').prop('disabled', false);          
                       
                     }
 
-                    if (response.countLikes == 0 && response.countDislikes == 0 )
+                   else
                     {
-                      
-                       $('#dislike-icon').show()
-                    }
+    $('#dislike-icon').html("<a id='dislike-icon' value='"+post_id+"'> <i class='fa fa-thumbs-down' aria-hidden='true'></i> </a>");
+  
+//append invisible button 
+
+$('#like-icon').attr("disabled","disabled");                
+
+    }
 
                 
-                 if (response.countDislikes == 0 && response.countLikes != 0 )
-                    {
-                       $('#dislike-icon').hide()    
-                        
-                    }
-        
-                  if (response.countDislikes == 0 && response.countLikes == 0 )
-                    {
-                         
-                       $('#like-icon').show() 
-                    }
-                   $("#count-likes").val(response.countLikes)
-                   $("#count-dislikes").val(response.countDislikes)
+                 
+                   $("#count-likes").val(response.AllLikes)
+                   $("#count-dislikes").val(response.AllDisLikes)
+
+
                 },
 
                error: function (ex) {
@@ -263,7 +376,101 @@ $("#dislike-icon").click(function () {
             console.log("aftter")
         });
 </script>
-  <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+
+<script> 
+$(document).ready(function(){
+    $(document).on("click",".flip",function (){
+        $(this).parents(".replay").find(".panel").eq(0).slideToggle("slow");
+    });
+    $(document).on("click",".reply-button", function () {
+
+            console.log("clicked")
+            replyText = $(this).parents(".replay").find(".reply-text").eq(0).val();
+            commentID = $(this).parents(".replay").find(".commId").eq(0).val();
+            PostID = $(".postId").val();
+            console.log(replyText);
+            console.log(commentID);
+            console.log(PostID);
+            if(replyText == "")
+                {
+                $('#alerts').html("<div class='alert alert-danger alert-dismissible fade show' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button><strong>Error!</strong> Please Insert Your Reply.</div>");
+        
+                }else{
+            $.ajax({
+                
+                crossOrigin: true,
+                url: 'comment/'+commentID+'/'+PostID,
+                type: 'post',
+                data: {
+                       'reply':replyText, 
+                      },
+                dataType: 'json',
+
+                success: function (response) {
+               
+
+               $("#all-replies-"+response.replyComment).append("<div class='replyDiv'><h5 class='post-title card-title'>"+response.replyUser+"</h5><p class='card-text'>"+response.replyText+"</p><h6 class='card-text text-right'>"+response.replyTime+"<h6><hr/></div></div>");
+               
+                console.log( $("#all-replies-"+response.replyComment))
+        
+        
+                $('.reply-text').val(""); 
+                console.log($(this))
+              // $(this).parents(".replay").find(".panel").eq(0).slideToggle("slow");
+               
+    }
+           
+         });
+ }
+            console.log("aftter")
+        });
+
+ 
+
+});
+</script>
+
+<script language="JavaScript">
+    $(document).ready(function() {
+        $('#commentForm').submit(function() { // catch the form's submit event
+      
+
+            $.ajax({ // create an AJAX call...
+                data: $(this).serialize(), // get the form data
+                type: $(this).attr('method'), // GET or POST
+                url: $(this).attr('action'), // the file to call
+                success: function(response) { // on success..
+//console.log($('.card[comment-id ='+response.commentId+']'));
+console.log("heeeeeeeeeeereeeeeeeeeeeeeee be4 comment")
+ $('#commentDiv').append("\
+<div class='card' >\n\
+<h4 class='post-title card-title'>"+response.commentUser+"</h4>\n\
+<p class='card-text'>"+response.commentText+"</p>\n\
+<h6 class='card-text text-right'>"+response.commentTime+"</h6>\n\
+</div>\n\
+<div id ='all-replies-"+response.commentId+"'>\n\
+<div class='replyDiv'>\n\
+</div>\n\
+</div><div class='replay'>\n\
+<button class='btn-danger flip'>reply</button>\n\
+<div class='form-group container panel'>\n\
+<input type='hidden' value ="+response.commentId+" class='commId'/>\n\
+<input type='hidden' value ="+response.postId+" class='postId'/>\n\
+<textarea class='form-control reply-text' rows='5'></textarea>\n\
+<button class='reply-button'>Save</button>\n\
+</div></div>");
+
+$('#id_commmentText').val("");
+        
+                }
+            });
+        //}
+            return false;
+        });
+    });
+</script>
+
+<script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
 
 
 </body>

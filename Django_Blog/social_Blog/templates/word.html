@@ -1,42 +1,53 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title></title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha/css/bootstrap.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 margin-tb">
-                    <div class="pull-left">
-                        <h1>All Forbidden Words</h1>
-                    </div>
-                    <div class="pull-right">
-                        <a class="btn btn-success" href="{% url 'createword' %}" > Create New Words</a>
+{% extends  'base.html'    %}
+{% block content %}
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Forbidden words </h4>
+                                <a  class="btn btn-success pull-right"  href="{% url 'createword' %}"  > Create </a>
+                            </div>
+                            {% if messages %}
+                                <ul class="messages">
+                            {% for message in messages %}
+                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                                  {% endfor %}
+                                </ul>
+                                {% endif %}
+                            <div class="content table-responsive table-full-width">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Word</th>
+                                        <th>  Length  </th>
+                                        <th width="280px">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {%  for word in words  %}
+                                    <tr>
+                                        <td> {{ forloop.counter }} </td>
+                                        <td> {{ word.word}} </td>
+                                        <td>  {{ word.wordLen }} </td>
+                                        <td>
+                                            <a class="btn btn-primary" href="{{word.id}}/update">Edit</a>
+                                            <a class="btn btn-danger" href="{{word.id}}/delete">Delete</a>
+                                        </td>
+                                    </tr>
+                                        {%   endfor %}
+                                    </tbody>
+                                    </table>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
-
-            <table class="table table-bordered">
-                <tr>
-                    <th>ID</th>
-                    <th>Word</th>
-                    <th>  Length  </th>
-                    <th width="280px">Action</th>
-                </tr>
-                    {%  for word in words  %}
-                <tr>
-                    <td> {{ word.id }} </td>
-                    <td> {{ word.word}} </td>
-                    <td>  {{ word.wordLen }} </td>
-                    <td>
-                        <a class="btn btn-primary" href="{{word.id}}/update">Edit</a>
-                        <a class="btn btn-danger" href="{{word.id}}/delete">Delete</a>
-                    </td>
-                </tr>
-                    {%   endfor %}
-            </table>
-
         </div>
-    </body>
-</html>
+{%  endblock  %}
+{% block title %} Forbidden Words {%  endblock %}
+
+
+
