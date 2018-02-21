@@ -314,16 +314,50 @@ def home (request):
 def showCatPosts(request,cat_id):
     #return HttpResponse("<h1>showCatPosts</h1>")
     current_user = request.user.id
-     #print current_user
-    checkUsersubscribe=UserCat.objects.filter(user_id=current_user)
+    checkUsersubscribe=[]
+    checkUsersubscribeQuery=UserCat.objects.filter(user_id=current_user)
+
+    for check in checkUsersubscribeQuery:
+        checkUsersubscribe.append(check.cat_id)
+    
+
     cat_name=Category.objects.get(id=cat_id).name
     all_Catagories=Category.objects.all()
+    all_Posts=Post.objects.all()
     latest_Posts=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')
     latest_Post=Post.objects.filter(cat_id=cat_id).order_by('-publish_date')[:1].get()
+    postsID=[]
+    all_Tags=[]
+    query=request.GET.get("search")
+    if query:
+        latest_Posts=all_Posts.filter(title__icontains=query)
+        all_Tags=Tag.objects.all().filter(tagName__icontains=query)
+        if(all_Tags):
+        
+            for tag in all_Tags:
+                qResult=PostTag.objects.all().filter(tag_id=tag.id)
+                postsID.append(qResult)
+
+            for post in postsID[0]:
+                qResult=all_Posts.filter(id=post.post_id)
+                latest_Posts = latest_Posts | qResult 
+               
+
+
+    page = request.GET.get('page', 4)
+
+    paginator = Paginator(latest_Posts,5)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(4)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
     context={"all_Catagories":all_Catagories ,
     "checkUsersubscribe":checkUsersubscribe,
     "latest_Posts":latest_Posts,
     "latest_Post":latest_Post,
+    "posts":posts,
     "cat_name":cat_name}
     return render(request,"CatPosts.html",context)
 
@@ -361,22 +395,22 @@ def unsubscribe(request):
     return JsonResponse(data)
 
 ############## Subscribe with Ajax ###########################
-@csrf_exempt
-def subscribe(request):
+# @csrf_exempt
+# def subscribe(request):
 
-    userID = request.POST.get('userID', None)
-    catID = request.POST.get('catID', None)
-    catName = request.POST.get('catName', None)
-    UserCat.objects.create(cat_id=catID, user_id=userID)
-    subject="Confirmation email from django"
-    message="you successfully subscribed in "+catName+" category all posts related to this category will display on your home page "
-    emailFrom=settings.EMAIL_HOST_USER
-    emailTo=[request.user.email]
-    send_mail(subject, message, emailFrom,emailTo,fail_silently=True)
-    data = {
-        'success': True
-    }
-    return JsonResponse(data)
+#     userID = request.POST.get('userID', None)
+#     catID = request.POST.get('catID', None)
+#     catName = request.POST.get('catName', None)
+#     UserCat.objects.create(cat_id=catID, user_id=userID)
+#     subject="Confirmation email from django"
+#     message="you successfully subscribed in "+catName+" category all posts related to this category will display on your home page "
+#     emailFrom=settings.EMAIL_HOST_USER
+#     emailTo=[request.user.email]
+#     send_mail(subject, message, emailFrom,emailTo,fail_silently=True)
+#     data = {
+#         'success': True
+#     }
+#     return JsonResponse(data)
 
 def draw(len):
     i=1

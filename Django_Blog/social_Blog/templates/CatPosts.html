@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	 <!-- Required meta tags -->
+   <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -21,32 +21,43 @@
 </head>
 <body>
 
-	  <!-- Navigation -->
+    <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div class="container">
         <a class="navbar-brand" href="#">Social Blog</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        <form class="form-inline" method="GET">
+          <input class="form-control mr-sm-2" name="search"type="text" value="{{request.GET.search}}" placeholder="Search by tag name or post title">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Home
+              <a class="nav-link" href="{% url 'home' %}">Home
                 <span class="sr-only">(current)</span>
               </a>
             </li>
+            {% if not user.is_authenticated %} 
             <li class="nav-item">
-              <a class="nav-link" href="#">Login</a>
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Register</a>
+              <a class="nav-link" href="{% url 'register' %}">Register</a>
             </li>
+            {% else %} 
             <li class="nav-item">
-              <a class="nav-link" href="#">Logout</a>
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
             </li>
+             {% endif %}
+
+            {% if user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="#">Manage Blog</a>
+              <a class="nav-link" href="{% url 'dashbord' %}">Manage Blog</a>
             </li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -64,7 +75,18 @@
             {% for cat in all_Catagories %}
             <div class="list-group-item col-12 row">
                <a href="/social_Blog/{{cat.id}}/showCatPosts/" class="col-6">{{cat.name}}</a>
-               <button class="btn btn-primary col-6">Subscribe</button>
+               {% if user.is_authenticated %} 
+              
+              
+              {% if cat.id not in checkUsersubscribe %}
+               <button class="btn btn-primary col-6 subscribe" href="#" userID="{{user.id}}" 
+               catID="{{cat.id}}" catName="{{cat.name}}">Subscribe</button>
+               {% else %}
+               <button class="btn btn-primary col-6 subscribe" href="#" userID="{{user.id}}" 
+               catID="{{cat.id}}" catName="{{cat.name}}">unsubscribe</button>
+               {% endif %}
+
+               {% endif %}
             </div>
            
             {% endfor %}
@@ -81,7 +103,7 @@
             
             <div class="carousel-inner" role="listbox">
               <div class="carousel-item active">
-                 {% static "" as imgSrc %}
+                 {% static "images/" as imgSrc %}
                  <img class="d-block img-fluid" src="{{ imgSrc }}/{{ latest_Post.img }}" width="900px" 
                 height="350px">
                  <div class="carousel-caption d-none d-md-block">
@@ -92,7 +114,7 @@
               </div>
               {% for post in latest_Posts %}
                 {% if post.id != latest_Post.id %}
-                {% static "" as imgSrc %}
+                {% static "images/" as imgSrc %}
                 <div class="carousel-item">
                 <img class="d-block img-fluid" src="{{ imgSrc }}/{{ post.img }}" width="900px" 
                 height="350px">
@@ -123,7 +145,7 @@
            {% for post in latest_Posts %}
             <div class="col-lg-6 col-md-6 mb-4">
               <div class="card ">
-                {% static "" as imgSrc %}
+                {% static "images/" as imgSrc %}
                 <a href="#"><img class="card-img-top" src="{{ imgSrc }}/{{ post.img }}" height="250px" alt=""></a>
                 <div class="card-body">
                   <h4 class="post-title card-title">
@@ -151,15 +173,60 @@
     <!-- /.container -->
 
     <!-- Footer -->
-    <footer class="py-5 bg-dark">
+     <footer class="py-5 bg-dark pag">
       <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2017</p>
+     {% if posts.has_other_pages %}
+    <ul class="pagination pag" >
+      {% if posts.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ posts.previous_page_number }}">
+      <span >&laquo;</span>
+      <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+     <li class="page-item disabled">
+      <a class="page-link" href="#">
+      <span >&laquo;</span>
+      <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for i in posts.paginator.page_range %}
+      {% if posts.number == i %}
+    <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+
+    {% else %}
+
+    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+     {% endif %}
+    {% endfor %}
+    {% if posts.has_next %}
+
+    <li class="page-item">
+      <a class="page-link" href="?page={{ posts.next_page_number }}" >
+      <span >&raquo;</span>
+      <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+       <li class="page-item disabled">
+      <a class="page-link" href="?page={{ posts.previous_page_number }}">
+      <span >&laquo;</span>
+      <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+  {% endif %}
       </div>
       <!-- /.container -->
     </footer>
 
  <!-- jQuery first then Bootstrap JS -->
-	<script src="{% static 'js/jquery.min.js'%}"></script>
+  <script src="{% static 'js/jquery-3.1.1.js'%}"></script>
+  
   <script src="{% static 'js/bootstrap.bundle.min.js'%}"></script>
+  <script src="{% static 'js/script.js'%}"></script>
 </body>
 </html>

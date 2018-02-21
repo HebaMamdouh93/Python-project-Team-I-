@@ -1,16 +1,12 @@
 
 #from django.conf.urls import include, url
 from django.conf.urls import include, url ,patterns
-#from . import views
+from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-from django.conf.urls import url
-from . import views
-#from social_Blog import views
 
-
-from social_Blog.views import login_view
+#from social_Blog.views import login_view
 
 urlpatterns = [
 
@@ -24,7 +20,7 @@ urlpatterns = [
 
 
     url(r'^post/(?P<post_id>[0-9]+)$', views.getPost,name="postDetails"),
-    url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
+    #url(r'^comment/(?P<comment_id>[0-9]+)/(?P<post_id>[0-9]+)$', views.reply),
 
     url(r'^dashbord/$', views.adminhome, name='dashbord'),
 

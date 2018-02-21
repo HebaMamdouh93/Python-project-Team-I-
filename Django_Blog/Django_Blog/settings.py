@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/1.8/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.8/ref/settings/
 """
-#for gmail
 from .email_info import *
 
 EMAIL_USE_TLS= EMAIL_USE_TLS
@@ -17,9 +16,6 @@ EMAIL_HOST= EMAIL_HOST
 EMAIL_HOST_USER= EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD= EMAIL_HOST_PASSWORD
 EMAIL_PORT= EMAIL_PORT
-
-
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
@@ -34,8 +30,6 @@ SECRET_KEY = '(r03^8ux+eymboqs#@!k45-)%yy*)8+j0@tiszd$t$2)6y7kq9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -59,7 +53,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'social_Blog.middleware.AdminMiddleware',
 )
 
 ROOT_URLCONF = 'Django_Blog.urls'
@@ -91,12 +84,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangoBlogdb',
         'USER': 'root',
-<<<<<<< HEAD
         'PASSWORD': '123',
 
-=======
-        'PASSWORD': 'om@1993',
->>>>>>> 1b8314097a123e86d5be2e7a1518f6fd69d7e130
         'HOST': 'localhost', #default host
         'PORT': '3306' #default port
     }
@@ -116,11 +105,9 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = os.path.join(BASE_DIR,"social_Blog/static/")
-MEDIA_ROOT = os.path.join(BASE_DIR, 'social_Blog/static/images')
-MEDIA_URL = '/social_Blog/'
 
-<<<<<<< HEAD
+
+
 
 
 # STATIC_URL = '/static/'
@@ -130,9 +117,18 @@ MEDIA_URL = '/social_Blog/'
 
 # MEDIA_URL = '/social_Blog/'
 
-=======
->>>>>>> 1b8314097a123e86d5be2e7a1518f6fd69d7e130
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+
+
+STATIC_URL = os.path.join(BASE_DIR,"social_Blog/static/")
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'social_Blog/static/images')
+MEDIA_URL = '/social_Blog/'
+
+
+
+
+
 
 
