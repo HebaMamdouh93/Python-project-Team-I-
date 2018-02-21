@@ -14,7 +14,7 @@ $(document).ready(function(){
 		$(this).html("unsubscribe");
 		console.log($(this).html());
 		$.ajax({
-        url: '../ajax/subscribe/',
+        url: '/social_Blog/ajax/subscribe/',
         type: 'POST',
         data: {
           'userID': userID,
@@ -36,7 +36,7 @@ $(document).ready(function(){
 	else{
 		$(this).html("Subscribe");
 		$.ajax({
-        url: '../ajax/unsubscribe/',
+        url: '/social_Blog/ajax/unsubscribe/',
         type: 'POST',
         data: {
           'userID': userID,

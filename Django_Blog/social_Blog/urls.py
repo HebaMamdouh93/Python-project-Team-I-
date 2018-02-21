@@ -15,8 +15,8 @@ urlpatterns = [
 
 
     url(r'^(?P<cat_id>[0-9]+)/showCatPosts/$',views.showCatPosts),
-    url(r'^ajax/subscribe/$', views.subscribe),
-    url(r'^ajax/unsubscribe/$', views.unsubscribe),
+    url(r'^ajax/subscribe/$', views.subscribe,name="subscribe"),
+    url(r'^ajax/unsubscribe/$', views.unsubscribe,name="unsubscribe"),
 
 
     url(r'^post/(?P<post_id>[0-9]+)$', views.getPost,name="postDetails"),
