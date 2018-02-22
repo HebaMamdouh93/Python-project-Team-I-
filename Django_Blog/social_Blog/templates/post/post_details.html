@@ -84,24 +84,7 @@
 
 <!-- Page Content -->
 
- <div class="col-lg-3">
-
-          <h1 class="my-4">All Catagories</h1>
-          <div class="list-group row">
-            {% for cat in all_Catagories %}
-            <div class="list-group-item col-12 row">
-               <a href="/social_Blog/{{cat.id}}/showCatPosts/" class="col-6">{{cat.name}}</a>
-               {% if user.is_authenticated %}
-               <a class="btn btn-primary col-6" href="/social_Blog/{{cat.id}}/1/subscribe/">Subscribe</a>
-               {% endif %}
-            </div>
-           
-            {% endfor %}
-           
-           
-          </div>
-
-        </div>
+ 
 
 <div id="alerts"></div>
 <div class="row text-center">
